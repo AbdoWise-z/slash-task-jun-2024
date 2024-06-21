@@ -5,6 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:slash_task/pages/home/models/category.model.dart';
 import 'package:slash_task/shared/values.dart';
 
+/// a widget that shows a bar that contains a list of the categories
+/// [categories] the list of the categories to be displayed
+/// [onCategorySelected] a callback function when the user clicked on
+///   a category option
 class HomeCategoriesBar extends StatefulWidget {
   final List<CategoryModel> categories;
   final void Function (CategoryModel) onCategorySelected;
@@ -27,7 +31,6 @@ class _HomeCategoriesBarState extends State<HomeCategoriesBar> {
     Widget catBar = SingleChildScrollView(
       primary: true,
       scrollDirection: Axis.horizontal,
-
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -64,6 +67,10 @@ class _HomeCategoriesBarState extends State<HomeCategoriesBar> {
   }
 }
 
+/// a widget that resembles one category option, simply an colum that contains
+/// an image and text beneath it
+/// [name] the of the category
+/// [icon] the icon of the category
 class CategoryView extends StatelessWidget {
   final String name;
   final String icon;

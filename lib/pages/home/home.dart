@@ -23,14 +23,14 @@ class Home extends StatelessWidget {
           BlocProvider<OffersBloc>(
             create: (BuildContext context) => OffersBloc(),
           ),
-          BlocProvider<ShopItemsBloc<BestSellingShopItems>>(
-            create: (BuildContext context) => ShopItemsBloc<BestSellingShopItems>(),
+          BlocProvider<ShopItemsBloc<BestSellingShop>>(
+            create: (BuildContext context) => ShopItemsBloc<BestSellingShop>(),
           ),
-          BlocProvider<ShopItemsBloc<NewArrivalsShopItems>>(
-            create: (BuildContext context) => ShopItemsBloc<NewArrivalsShopItems>(),
+          BlocProvider<ShopItemsBloc<NewArrivalsShop>>(
+            create: (BuildContext context) => ShopItemsBloc<NewArrivalsShop>(),
           ),
-          BlocProvider<ShopItemsBloc<RecommendedShopItems>>(
-            create: (BuildContext context) => ShopItemsBloc<RecommendedShopItems>(),
+          BlocProvider<ShopItemsBloc<RecommendedShop>>(
+            create: (BuildContext context) => ShopItemsBloc<RecommendedShop>(),
           ),
         ],
         child: const DefaultTabController(

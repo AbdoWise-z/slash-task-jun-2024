@@ -4,6 +4,8 @@
 /// about it, so I'm going to assume the app has the
 /// list of available categories by default.
 ///
+/// [name] the name of the category
+/// [icon] the icon of the category
 class CategoryModel {
   final String name;
   final String icon;

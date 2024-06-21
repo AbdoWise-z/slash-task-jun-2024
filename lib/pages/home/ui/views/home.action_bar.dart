@@ -2,6 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:slash_task/shared/values.dart';
 
+///
+/// creates the main home action bar
+/// [hasNotification] weather or not to show a notification indicator (red circle indicator)
+/// [city] the currently selected city name to be displayed
+/// [location] the currently selected location to be displayed
+/// [onSelectCity] a callback function that will be invoked when the city select spinner is
+///   pressed
+/// [onNotificationClicked] when the notifications icon is clicked this callback will be invoked
 Widget getHomeAppBar({
   required bool hasNotification,
   required String city,

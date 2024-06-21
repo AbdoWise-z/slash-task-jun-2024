@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:slash_task/pages/home/models/shop_item.model.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';
@@ -23,6 +24,8 @@ part 'home_state.dart';
 ///   inside them changes.
 /// * [LocationChanged]
 ///   When the location changes, this even will trigger
+/// * [AddToCartEvent]
+///   When an item is to be added to cart
 ///
 /// Home State can be one of:
 /// * [InitialHomeState]
@@ -52,6 +55,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     on<LocationChanged>((event, emit) {
       emit((state as LoadedHomeState).copyWith(currentCity: event.city , currentLocation: event.location));
+    });
+
+    on<AddToCartEvent>((event , emit) async {
+      List<ShopItemModel> list = [];
+      list.addAll((state as LoadedHomeState).cart);
+      list.add(event.item.copyWith());
+      emit((state as LoadedHomeState).copyWith(cart: list,));
+      print("Item added to cart ${event.item.name}");
     });
   }
 }

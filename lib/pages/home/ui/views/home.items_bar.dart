@@ -6,6 +6,15 @@ import 'package:slash_task/shared/ui/animated_appear.dart';
 import 'package:slash_task/shared/ui/shimmer_indicator.dart';
 import 'package:slash_task/shared/values.dart';
 
+/// a class that holds a shop list / grid
+/// [items] the items to be displayed on the shop
+/// [onAddedToCart] a function that is called when the added to cart button is clicked
+/// [onLiked] a function that will be called when like/unlike button is pressed
+/// [onClicked] a function to be called when an item is clicked
+/// [loadMore] a function to be called when this widget wants to request the load
+///   of more data, if the value is null, then it means we cannot load anymore data
+/// [loading] weather or not to show a loading placeholders for the items
+/// [loadingMore] weather or not to show the loading indicator at the end of the list/grid
 class HomeShopItemsBar extends StatelessWidget {
   final List<ShopItemModel> items;
   final void Function(ShopItemModel) onAddedToCart;
@@ -31,8 +40,10 @@ class HomeShopItemsBar extends StatelessWidget {
   }
 }
 
+/// a shop grid specifically optimized for web view
+/// growable grid view
 class _ShopItemsWeb extends StatelessWidget {
-  const _ShopItemsWeb({super.key, required this.container});
+  const _ShopItemsWeb({required this.container});
 
   final HomeShopItemsBar container;
 
@@ -144,7 +155,8 @@ class _ShopItemsWeb extends StatelessWidget {
   }
 }
 
-
+/// a shop items specifically optimized for mobile version of the app
+/// horizontal scrollable list
 class _ShopItemsMobile extends StatefulWidget {
   const _ShopItemsMobile({
     required this.container,

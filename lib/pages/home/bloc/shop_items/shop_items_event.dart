@@ -1,27 +1,31 @@
 part of 'shop_items_bloc.dart';
 
+/// a base class that all Shop events originates from
 @immutable
-sealed class ShopItemsEvent<T extends ShopItem> {}
+sealed class ShopItemsEvent<T extends ShopType> {}
 
-final class LoadShopItemsEvent<T extends ShopItem> extends ShopItemsEvent<T> {
+/// an event that is triggered when we want to initially load the shop data
+final class LoadShopItemsEvent<T extends ShopType> extends ShopItemsEvent<T> {
   LoadShopItemsEvent();
 }
 
-final class LoadMoreShopItemsEvent<T extends ShopItem> extends ShopItemsEvent<T> {
+/// an event that is triggered when we want to load more shop data from the server
+final class LoadMoreShopItemsEvent<T extends ShopType> extends ShopItemsEvent<T> {
   LoadMoreShopItemsEvent();
 }
 
-final class LikeItemEvent<T extends ShopItem> extends ShopItemsEvent<T> {
+/// an event that is triggered when an item was liked from the user
+/// [item] the item that was liked
+final class LikeItemEvent<T extends ShopType> extends ShopItemsEvent<T> {
   final ShopItemModel item;
   LikeItemEvent(this.item);
 }
 
-final class UnLikeItemEvent<T extends ShopItem> extends ShopItemsEvent<T> {
+/// an event that is triggered when an item was unliked from the user
+/// [item] the item that was unliked
+final class UnLikeItemEvent<T extends ShopType> extends ShopItemsEvent<T> {
   final ShopItemModel item;
   UnLikeItemEvent(this.item);
 }
 
-final class AddToCartEvent<T extends ShopItem> extends ShopItemsEvent<T> {
-  final ShopItemModel item;
-  AddToCartEvent(this.item);
-}
+

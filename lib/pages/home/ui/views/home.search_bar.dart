@@ -4,6 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:slash_task/shared/values.dart';
 
+/// a function that generates the home search bar
+/// [context] current build context
+/// [controller] the text editing controller for the text field
+/// [filtersEnabled] weather or not to expand the filters menu
+/// [onFiltersClicked] a call back when the filter button is clicked
+/// [onSearchSubmit] a call back when input text is submitted
 Widget getHomeSearchBar({
   required BuildContext context,
   required TextEditingController controller,

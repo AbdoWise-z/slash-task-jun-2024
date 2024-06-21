@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:slash_task/shared/values.dart';
 
+/// a class that represents a header, for example:
+/// Best Selling                      See all >
+///
+/// [text] the text to be displayed on the left "Best Selling"
+/// [moreOptionText] the text to be displayed on the right "See all"
+/// [moreIcon] a widget that will be displayed next to the text on the right
+/// [onSeeMore] when the right section of the header is clicked, this
+///   callback is invoked
 class HomeHeader extends StatelessWidget {
   final String text;
   final String moreOptionText;

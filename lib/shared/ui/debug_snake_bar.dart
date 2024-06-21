@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// just a debug print snake bar
 void showSnakeBar(BuildContext context, String message , {
   Duration duration = const Duration(milliseconds: 300)
 }){

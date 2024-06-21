@@ -16,11 +16,15 @@ import 'package:slash_task/pages/home/ui/views/home.header.dart';
 import 'package:slash_task/pages/home/ui/views/home.items_bar.dart';
 import 'package:slash_task/pages/home/ui/views/home.offers.dart';
 import 'package:slash_task/pages/home/ui/views/home.search_bar.dart';
+import 'package:slash_task/pages/home/ui/views/home.shop.dart';
 import 'package:slash_task/shared/ui/debug_snake_bar.dart';
 import 'package:slash_task/shared/ui/shimmer_indicator.dart';
 import 'package:slash_task/shared/values.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
+/// manages an controls the man Home widget
+/// doesn't take any input, its just a wrapper around
+/// widgets inside /views
 class HomeMainUI extends StatefulWidget {
   const HomeMainUI({super.key});
   @override
@@ -29,40 +33,12 @@ class HomeMainUI extends StatefulWidget {
 
 class _HomeMainUIState extends State<HomeMainUI> {
   final TextEditingController controller = TextEditingController();
-  PageController? pageController = null;
+  PageController? pageController;
 
-  final List<ShopItemModel> mockShopItems = [
-    ShopItemModel(
-      liked: true,
-      id: 0,
-      name: "Botatos",
-      image: "assets/images/best_seller_1.png",
-      price: 12,
-    ),
-    ShopItemModel(
-      liked: true,
-      id: 0,
-      name: "So That worked",
-      image: "assets/images/best_seller_1.png",
-      price: 12,
-    ),
-    ShopItemModel(
-      liked: true,
-      id: 0,
-      name: "Heh",
-      image: "assets/images/best_seller_1.png",
-      price: 12,
-    ),
-    ShopItemModel(
-      liked: true,
-      id: 0,
-      name: "Lesgooo",
-      image: "assets/images/best_seller_1.png",
-      price: 12,
-    ),
-  ];
+
   TabController? _tabController;
 
+  /// reloads the home resetting its state and loading all data from server
   void _reloadHome(){
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
@@ -77,12 +53,12 @@ class _HomeMainUIState extends State<HomeMainUI> {
     BlocProvider.of<NotificationsBloc>(context).add(InitNotificationsEvent());
     BlocProvider.of<OffersBloc>(context).add(LoadOffersEvent());
 
-    BlocProvider.of<ShopItemsBloc<BestSellingShopItems>>(context)
-        .add(LoadShopItemsEvent<BestSellingShopItems>());
-    BlocProvider.of<ShopItemsBloc<NewArrivalsShopItems>>(context)
-        .add(LoadShopItemsEvent<NewArrivalsShopItems>());
-    BlocProvider.of<ShopItemsBloc<RecommendedShopItems>>(context)
-        .add(LoadShopItemsEvent<RecommendedShopItems>());
+    BlocProvider.of<ShopItemsBloc<BestSellingShop>>(context)
+        .add(LoadShopItemsEvent<BestSellingShop>());
+    BlocProvider.of<ShopItemsBloc<NewArrivalsShop>>(context)
+        .add(LoadShopItemsEvent<NewArrivalsShop>());
+    BlocProvider.of<ShopItemsBloc<RecommendedShop>>(context)
+        .add(LoadShopItemsEvent<RecommendedShop>());
   }
 
   @override
@@ -111,7 +87,7 @@ class _HomeMainUIState extends State<HomeMainUI> {
       body: TabBarView(
         clipBehavior: Clip.antiAlias,
         children: [
-          // Page "Home" content
+          /// Page "Home" content
           Shimmer(
             linearGradient: AppTheme.shimmerGradient,
 
@@ -120,15 +96,18 @@ class _HomeMainUIState extends State<HomeMainUI> {
 
               },
               builder: (context, homeState) {
+
+                /// home Error page
                 if (homeState is ErrorHomeState){
-                  return HomeErrorPage();
+                  return const HomeErrorPage();
                 }
 
+                /// Home Main Page
                 if (homeState is LoadedHomeState) {
                   var widget = SingleChildScrollView(
                     child: Column(
                       children: [
-                        //action bar
+                        /// action bar
                         Container(
                           padding: const EdgeInsets.all(AppDimen.GLOBAL_PADDING)
                               .copyWith(
@@ -197,7 +176,7 @@ class _HomeMainUIState extends State<HomeMainUI> {
                           height: AppDimen.APPBAR_TO_CONTENT_PADDING,
                         ),
 
-                        //search area
+                        /// search bar area
                         Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: AppDimen.GLOBAL_PADDING),
@@ -225,7 +204,7 @@ class _HomeMainUIState extends State<HomeMainUI> {
                           height: AppDimen.CONTENT_SPACING,
                         ),
 
-                        //offers area
+                        /// offers area
                         BlocConsumer<OffersBloc, OffersState>(
                           listener: (context, state) {},
                           builder: (context, offersState) {
@@ -257,7 +236,7 @@ class _HomeMainUIState extends State<HomeMainUI> {
                           height: AppDimen.CONTENT_SPACING,
                         ),
 
-                        //Categories area
+                        /// Categories area
                         Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: AppDimen.GLOBAL_PADDING),
@@ -312,268 +291,26 @@ class _HomeMainUIState extends State<HomeMainUI> {
                           height: AppDimen.CONTENT_SPACING,
                         ),
 
-                        //Best selling area
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: AppDimen.GLOBAL_PADDING),
-                          child: HomeHeader(
-                              text: "Best Selling",
-                              moreOptionText: "See all",
-                              moreIcon:
-                              const Icon(Icons.keyboard_arrow_right_rounded),
-                              onSeeMore: () {
-                                showSnakeBar(context, "See all : Best selling");
-                              }),
-                        ),
-                        const SizedBox(
-                          height: AppDimen.TITLE_TO_CONTENT_PADDING,
-                        ),
-
-                        BlocConsumer<
-                            ShopItemsBloc<BestSellingShopItems>,
-                            ShopItemsState>(
-                          listener: (context, state) {},
-                          builder: (context, shopState) {
-                            print("Rebuild Shop: Best Selling");
-                            if (shopState is ShopItemsStateLoadError){
-                              BlocProvider.of<HomeBloc>(context).add(HomeErrorEvent());
-                              return const SizedBox();
-                            }
-
-                            return HomeShopItemsBar(
-                              items: (shopState is ShopStateLoaded)
-                                  ? shopState.items
-                                  : mockShopItems,
-                              onAddedToCart: (item) {
-                                BlocProvider.of<
-                                    ShopItemsBloc<BestSellingShopItems>>(
-                                    context)
-                                    .add(
-                                  AddToCartEvent<BestSellingShopItems>(item),
-                                );
-                                showSnakeBar(context,
-                                    "Item Added to cart : {id: ${item
-                                        .id} , name: ${item.name}}");
-                              },
-                              onLiked: (item, liked) {
-                                if (liked) {
-                                  BlocProvider.of<
-                                      ShopItemsBloc<
-                                          BestSellingShopItems>>(context)
-                                      .add(
-                                    LikeItemEvent<BestSellingShopItems>(item),
-                                  );
-                                  showSnakeBar(context, "Liked Item: {id: ${item
-                                      .id} , name: ${item.name}}");
-                                } else {
-                                  BlocProvider.of<
-                                      ShopItemsBloc<
-                                          BestSellingShopItems>>(context)
-                                      .add(
-                                    UnLikeItemEvent<BestSellingShopItems>(item),
-                                  );
-                                  showSnakeBar(context,
-                                      "UnLiked Item: {id: ${item
-                                          .id} , name: ${item.name}}");
-                                }
-                              },
-                              loadMore: () async {
-                                BlocProvider.of<
-                                    ShopItemsBloc<BestSellingShopItems>>(
-                                    context)
-                                    .add(LoadMoreShopItemsEvent<
-                                    BestSellingShopItems>());
-                              },
-                              onClicked: (item) {
-                                showSnakeBar(context, "Item Clicked: {id: ${item
-                                    .id} , name: ${item.name}}");
-                              },
-                              loading: shopState is! ShopStateLoaded,
-                              loadingMore: (shopState is ShopStateLoaded) &&
-                                  shopState.loadingMore,
-                            );
-                          },
-                        ),
-
+                        /// Best selling area
+                        HomeShop<BestSellingShop>(context: context, name: "Best Selling"),
                         const SizedBox(
                           height: AppDimen.CONTENT_SPACING,
                         ),
 
-                        //New Arrivals area
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: AppDimen.GLOBAL_PADDING),
-                          child: HomeHeader(
-                              text: "New Arrival",
-                              moreOptionText: "See all",
-                              moreIcon:
-                              const Icon(Icons.keyboard_arrow_right_rounded),
-                              onSeeMore: () {
-                                showSnakeBar(context, "See all : New Arrivals");
-                              }),
-                        ),
-                        const SizedBox(
-                          height: AppDimen.TITLE_TO_CONTENT_PADDING,
-                        ),
-                        BlocConsumer<
-                            ShopItemsBloc<NewArrivalsShopItems>,
-                            ShopItemsState>(
-                          listener: (context, state) {},
-                          builder: (context, shopState) {
-                            print("Rebuild Shop: New Arrivals");
-                            if (shopState is ShopItemsStateLoadError){
-                              BlocProvider.of<HomeBloc>(context).add(HomeErrorEvent());
-                              return const SizedBox();
-                            }
-
-                            return HomeShopItemsBar(
-                              items: (shopState is ShopStateLoaded)
-                                  ? shopState.items
-                                  : mockShopItems,
-                              onAddedToCart: (item) {
-                                BlocProvider.of<
-                                    ShopItemsBloc<NewArrivalsShopItems>>(
-                                    context)
-                                    .add(
-                                  AddToCartEvent<NewArrivalsShopItems>(item),
-                                );
-
-                                showSnakeBar(context,
-                                    "Item Added to cart : {id: ${item
-                                        .id} , name: ${item.name}}");
-                              },
-                              onLiked: (item, liked) {
-                                if (liked) {
-                                  BlocProvider.of<
-                                      ShopItemsBloc<
-                                          NewArrivalsShopItems>>(context)
-                                      .add(
-                                    LikeItemEvent<NewArrivalsShopItems>(item),
-                                  );
-                                  showSnakeBar(context, "Liked Item: {id: ${item
-                                      .id} , name: ${item.name}}");
-                                } else {
-                                  BlocProvider.of<
-                                      ShopItemsBloc<
-                                          NewArrivalsShopItems>>(context)
-                                      .add(
-                                    UnLikeItemEvent<NewArrivalsShopItems>(item),
-                                  );
-                                  showSnakeBar(context,
-                                      "UnLiked Item: {id: ${item
-                                          .id} , name: ${item.name}}");
-                                }
-                              },
-                              loadMore: () async {
-                                BlocProvider.of<
-                                    ShopItemsBloc<NewArrivalsShopItems>>(
-                                    context)
-                                    .add(LoadMoreShopItemsEvent<
-                                    NewArrivalsShopItems>());
-                              },
-                              onClicked: (item) {
-                                showSnakeBar(context, "Item Clicked: {id: ${item
-                                    .id} , name: ${item.name}}");
-                              },
-                              loading: shopState is! ShopStateLoaded,
-                              loadingMore: (shopState is ShopStateLoaded) &&
-                                  shopState.loadingMore,
-                            );
-                          },
-                        ),
-
+                        /// New Arrival area
+                        HomeShop<NewArrivalsShop>(context: context, name: "New Arrival"),
                         const SizedBox(
                           height: AppDimen.CONTENT_SPACING,
                         ),
 
-                        //Recommended area
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: AppDimen.GLOBAL_PADDING),
-                          child: HomeHeader(
-                              text: "Recommended For You",
-                              moreOptionText: "See all",
-                              moreIcon:
-                              const Icon(Icons.keyboard_arrow_right_rounded),
-                              onSeeMore: () {
-                                showSnakeBar(
-                                    context, "See all : Recommended For You");
-                              }),
-                        ),
-                        const SizedBox(
-                          height: AppDimen.TITLE_TO_CONTENT_PADDING,
-                        ),
-                        BlocConsumer<ShopItemsBloc<RecommendedShopItems>,
-                            ShopItemsState>(
-                          listener: (context, state) {},
-                          builder: (context, shopState) {
-                            print("Rebuild Shop: Recommended");
-                            if (shopState is ShopItemsStateLoadError){
-                              BlocProvider.of<HomeBloc>(context).add(HomeErrorEvent());
-                              return const SizedBox();
-                            }
-
-                            return HomeShopItemsBar(
-                              items: (shopState is ShopStateLoaded)
-                                  ? shopState.items
-                                  : mockShopItems,
-                              onAddedToCart: (item) {
-                                BlocProvider.of<
-                                    ShopItemsBloc<RecommendedShopItems>>(
-                                    context)
-                                    .add(
-                                  AddToCartEvent<RecommendedShopItems>(item),
-                                );
-                                showSnakeBar(context,
-                                    "Item Added to cart : {id: ${item
-                                        .id} , name: ${item.name}}");
-                              },
-                              onLiked: (item, liked) {
-                                if (liked) {
-                                  BlocProvider.of<
-                                      ShopItemsBloc<
-                                          RecommendedShopItems>>(context)
-                                      .add(
-                                    LikeItemEvent<RecommendedShopItems>(item),
-                                  );
-                                  showSnakeBar(context, "Liked Item: {id: ${item
-                                      .id} , name: ${item.name}}");
-                                } else {
-                                  BlocProvider.of<
-                                      ShopItemsBloc<
-                                          RecommendedShopItems>>(context)
-                                      .add(
-                                    UnLikeItemEvent<RecommendedShopItems>(item),
-                                  );
-                                  showSnakeBar(context,
-                                      "UnLiked Item: {id: ${item
-                                          .id} , name: ${item.name}}");
-                                }
-                              },
-                              loadMore: () async {
-                                BlocProvider.of<
-                                    ShopItemsBloc<RecommendedShopItems>>(
-                                    context)
-                                    .add(LoadMoreShopItemsEvent<
-                                    RecommendedShopItems>());
-                              },
-                              onClicked: (item) {
-                                showSnakeBar(context, "Item Clicked: {id: ${item
-                                    .id} , name: ${item.name}}");
-                              },
-                              loading: shopState is! ShopStateLoaded,
-                              loadingMore: (shopState is ShopStateLoaded) &&
-                                  shopState.loadingMore,
-                            );
-                          },
-                        ),
+                        /// Recommended For You area
+                        HomeShop<RecommendedShop>(context: context, name: "Recommended For You"),
                       ],
                     ),
                   );
 
                   return widget;
                 }
-
                 return const SizedBox(); //unknown state
               },
             ),

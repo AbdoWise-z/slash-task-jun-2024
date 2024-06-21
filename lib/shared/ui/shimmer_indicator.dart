@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+/// a shimmer loading animation
+/// for more information on how it works, check [this](https://docs.flutter.dev/cookbook/effects/shimmer-loading) out
 class Shimmer extends StatefulWidget {
   static ShimmerState? of(BuildContext context) {
     return context.findAncestorStateOfType<ShimmerState>();

@@ -26,8 +26,10 @@ class LoadedHomeState extends HomeState {
   final bool filtersDisplayed;
   final String currentLocation;
   final String currentCity;
+  final List<ShopItemModel> cart;
 
   LoadedHomeState({
+    this.cart = const [],
     this.activeTab = 0,
     this.filtersDisplayed = false,
     this.currentLocation = "Naser City",
@@ -39,12 +41,14 @@ class LoadedHomeState extends HomeState {
     bool? filtersDisplayed,
     String? currentLocation,
     String? currentCity,
+    List<ShopItemModel>? cart,
   }) {
     return LoadedHomeState(
       activeTab: activeTab ?? this.activeTab,
       filtersDisplayed: filtersDisplayed ?? this.filtersDisplayed,
       currentLocation: currentLocation ?? this.currentLocation,
       currentCity: currentCity ?? this.currentCity,
+      cart: cart ?? this.cart,
     );
   }
 

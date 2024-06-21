@@ -7,6 +7,7 @@ import 'package:slash_task/pages/home/models/shop_item.model.dart';
 import 'package:slash_task/shared/api/api.dart';
 import 'package:slash_task/shared/base.dart';
 
+
 enum ShopItemType{
   Best_Selling,
   New_Arrivals,
@@ -16,6 +17,7 @@ enum ShopItemType{
 class HomeRepo {
   HomeRepo._();
 
+  /// loads offers, weather from the mock asset data or from the deployed API
   static Future<ApiResponse<List<OfferModel>>> loadOffers() async {
     // may need to add more params here, account token, etc..
     ApiResponse<List<OfferModel>> res = await Api.apiGet(ApiPath.fetchOffers);
@@ -36,6 +38,11 @@ class HomeRepo {
     return res;
   }
 
+  /// loads shop items, weather from the mock asset data or from the deployed API
+  /// [type] the type of items you want to load, one of :
+  /// * [ShopItemType.Best_Selling]
+  /// * [ShopItemType.New_Arrivals]
+  /// * [ShopItemType.Recommended]
   static Future<ApiResponse<List<ShopItemModel>>> loadShopItems(ShopItemType type) async {
     // may need to add more params here, account token, etc..
     ApiPath path = ApiPath.fetchBestSelling;

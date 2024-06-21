@@ -10,20 +10,36 @@ part 'shop_items_event.dart';
 part 'shop_items_state.dart';
 
 /// a base class for the shop types
-sealed class ShopItem {}
+sealed class ShopType {}
 
 /// a class that represents the Best selling shop
-class BestSellingShopItems extends ShopItem {}
+class BestSellingShop extends ShopType {}
 
 /// a class that represents the new arrivals shop
-class NewArrivalsShopItems extends ShopItem {}
+class NewArrivalsShop extends ShopType {}
 
 /// a class that represents the recommended shop
-class RecommendedShopItems extends ShopItem {}
+class RecommendedShop extends ShopType {}
 
-/// a BloC class that manages the state of one shop,
-/// the generic class [T]
-class ShopItemsBloc<T extends ShopItem> extends Bloc<ShopItemsEvent<T>, ShopItemsState> {
+/// a BloC class that manages the state of one shop, the generic class [T]
+/// is just to determine the end point that this BloC will use to load the
+/// data from the server
+///
+/// it manages the following states:
+/// * [ShopStateInitial] the initial state for the shop
+/// * [ShopItemsStateLoadError] state that happens if error was encountered while
+///   loading the data
+/// * [ShopStateLoaded] state that represents when the shop was successfully loaded
+///   from the web server
+///
+/// it deals with the following events:
+/// * [LoadShopItemsEvent] when this event happens, the first shop load action is triggered
+///   to load the shop content from the web server
+/// * [LoadMoreShopItemsEvent] loads more shop content into the currently loaded content
+/// * [LikeItemEvent] when an item is liked this event is triggered
+/// * [UnLikeItemEvent] when an item is un-liked this event is triggered
+/// * [AddToCartEvent] when an item is added to cart, this event is triggered
+class ShopItemsBloc<T extends ShopType> extends Bloc<ShopItemsEvent<T>, ShopItemsState> {
   ShopItemsBloc() : super(ShopStateInitial()) {
 
     on<LoadShopItemsEvent<T>>(_loadShopInitial);
@@ -71,20 +87,16 @@ class ShopItemsBloc<T extends ShopItem> extends Bloc<ShopItemsEvent<T>, ShopItem
       // emit((state as ShopStateLoaded).copyWith(items: items));
     });
 
-    on<AddToCartEvent<T>>((event , emit) async {
-      var list = (state as ShopStateLoaded).cart;
-      list.add(event.item.copyWith());
-      emit((state as ShopStateLoaded).copyWith(cart: list,));
-      print("Item added to cart $T");
-    });
+
   }
 
+  /// loads the initial shop data then updates the shop state
   FutureOr<void> _loadShopInitial(LoadShopItemsEvent<T> event, Emitter<ShopItemsState> emit) async {
     emit(ShopStateInitial());
 
     var items = await HomeRepo.loadShopItems(
-        (T == BestSellingShopItems) ? ShopItemType.Best_Selling :
-        (T == NewArrivalsShopItems) ? ShopItemType.New_Arrivals :
+        (T == BestSellingShop) ? ShopItemType.Best_Selling :
+        (T == NewArrivalsShop) ? ShopItemType.New_Arrivals :
         ShopItemType.Recommended
     );
 
@@ -92,19 +104,19 @@ class ShopItemsBloc<T extends ShopItem> extends Bloc<ShopItemsEvent<T>, ShopItem
       emit(ShopItemsStateLoadError());
     } else {
       emit(ShopStateLoaded(
-        cart: [],
         items: items.data!,
         loadingMore: false,
       ));
     }
   }
 
+  /// tires to load more data then updates the state
   FutureOr<void> _loadMoreShopItems(LoadMoreShopItemsEvent<T> event, Emitter<ShopItemsState> emit) async {
     /// there should be another end-point where we can load more items
     /// but I'll work with what I got ig ..
     var items = await HomeRepo.loadShopItems(
-        (T == BestSellingShopItems) ? ShopItemType.Best_Selling :
-        (T == NewArrivalsShopItems) ? ShopItemType.New_Arrivals :
+        (T == BestSellingShop) ? ShopItemType.Best_Selling :
+        (T == NewArrivalsShop) ? ShopItemType.New_Arrivals :
         ShopItemType.Recommended
     );
     var list = (state as ShopStateLoaded).items;

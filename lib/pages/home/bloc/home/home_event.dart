@@ -27,5 +27,12 @@ class LocationChanged extends HomeEvent {
   LocationChanged({required this.location, required this.city});
 }
 
+/// an event that is triggered when an item was added to cart
+/// [item] the item that was added to cart
+final class AddToCartEvent extends HomeEvent {
+  final ShopItemModel item;
+  AddToCartEvent(this.item);
+}
+
 
 

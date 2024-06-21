@@ -1,6 +1,13 @@
 
 import 'package:flutter/material.dart';
 
+///
+/// a class that creates an appear animation on its child widget if
+/// [animate] changes from false to true or if this is the first time
+/// the widget is created and [animate] is true
+///
+/// [duration] the duration of the fade-in animation
+/// [child] the child widget to animate
 class AnimatedAppear extends StatefulWidget {
   const AnimatedAppear({super.key, required this.child, required this.animate, required this.duration});
   final Widget child;

@@ -7,6 +7,7 @@ import 'package:slash_task/pages/home/bloc/offers/offers_bloc.dart';
 import 'package:slash_task/pages/home/bloc/shop_items/shop_items_bloc.dart';
 import 'package:slash_task/shared/values.dart';
 
+/// a class that represents the error page that will be shown when an error occur
 class HomeErrorPage extends StatelessWidget {
   const HomeErrorPage({super.key});
 
@@ -37,12 +38,12 @@ class HomeErrorPage extends StatelessWidget {
               BlocProvider.of<NotificationsBloc>(context).add(InitNotificationsEvent());
               BlocProvider.of<OffersBloc>(context).add(LoadOffersEvent());
 
-              BlocProvider.of<ShopItemsBloc<BestSellingShopItems>>(context)
-                  .add(LoadShopItemsEvent<BestSellingShopItems>());
-              BlocProvider.of<ShopItemsBloc<NewArrivalsShopItems>>(context)
-                  .add(LoadShopItemsEvent<NewArrivalsShopItems>());
-              BlocProvider.of<ShopItemsBloc<RecommendedShopItems>>(context)
-                  .add(LoadShopItemsEvent<RecommendedShopItems>());
+              BlocProvider.of<ShopItemsBloc<BestSellingShop>>(context)
+                  .add(LoadShopItemsEvent<BestSellingShop>());
+              BlocProvider.of<ShopItemsBloc<NewArrivalsShop>>(context)
+                  .add(LoadShopItemsEvent<NewArrivalsShop>());
+              BlocProvider.of<ShopItemsBloc<RecommendedShop>>(context)
+                  .add(LoadShopItemsEvent<RecommendedShop>());
 
             },
             child: const Text(

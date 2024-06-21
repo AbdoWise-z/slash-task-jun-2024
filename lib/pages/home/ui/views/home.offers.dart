@@ -6,6 +6,10 @@ import 'package:slash_task/shared/ui/shimmer_indicator.dart';
 import 'package:slash_task/shared/values.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+/// a widget that displays the offers inside the home
+/// [offers] the offers to be displayed
+/// [loading] weather or not to show loading place holders for the items
+/// [onOfferClicked] a callback to be invoked when user clicks an offer
 class OffersView extends StatefulWidget {
   final List<OfferModel> offers;
   final bool loading;
@@ -196,6 +200,14 @@ class _OffersViewState extends State<OffersView> {
   }
 }
 
+/// a widget that represents the an offer
+/// [index] the index of this offer inside the list
+/// [page] the current page controller position
+/// [offer] the offer data
+/// [maxWidth] the max width this widget can take
+/// [maxHeight] the max height this widget can take
+/// [loading] should it be just a loading place holder ?
+/// [onClicked] a callback when clicked
 class OfferCard extends StatelessWidget {
   const OfferCard(
       {super.key,
