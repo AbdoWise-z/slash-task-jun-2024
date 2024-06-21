@@ -115,7 +115,7 @@ class _HomeMainUIState extends State<HomeMainUI> {
           Shimmer(
             linearGradient: AppTheme.shimmerGradient,
 
-            child: BlocConsumer<HomeBloc, BaseHomeState>(
+            child: BlocConsumer<HomeBloc, HomeState>(
               listener: (context, state) {
 
               },
@@ -124,7 +124,7 @@ class _HomeMainUIState extends State<HomeMainUI> {
                   return HomeErrorPage();
                 }
 
-                if (homeState is HomeState) {
+                if (homeState is LoadedHomeState) {
                   var widget = SingleChildScrollView(
                     child: Column(
                       children: [
@@ -141,7 +141,7 @@ class _HomeMainUIState extends State<HomeMainUI> {
                             builder: (context, notificationState) {
                               return getHomeAppBar(
                                   hasNotification:
-                                  notificationState is NotificationsLoaded
+                                  notificationState is LoadedNotificationsState
                                       ? notificationState.notifyUser
                                       : false,
                                   city: homeState.currentCity,

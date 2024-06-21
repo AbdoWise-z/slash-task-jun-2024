@@ -1,5 +1,7 @@
 part of 'home_bloc.dart';
 
+/// a file that contains all of the events definitions
+/// see home_bloc.dart for their explanation
 @immutable
 sealed class HomeEvent {}
 

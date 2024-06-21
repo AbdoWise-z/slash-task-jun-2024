@@ -9,12 +9,20 @@ import 'package:slash_task/pages/home/repo/home.repo.dart';
 part 'shop_items_event.dart';
 part 'shop_items_state.dart';
 
+/// a base class for the shop types
 sealed class ShopItem {}
+
+/// a class that represents the Best selling shop
 class BestSellingShopItems extends ShopItem {}
+
+/// a class that represents the new arrivals shop
 class NewArrivalsShopItems extends ShopItem {}
+
+/// a class that represents the recommended shop
 class RecommendedShopItems extends ShopItem {}
 
-
+/// a BloC class that manages the state of one shop,
+/// the generic class [T]
 class ShopItemsBloc<T extends ShopItem> extends Bloc<ShopItemsEvent<T>, ShopItemsState> {
   ShopItemsBloc() : super(ShopStateInitial()) {
 
