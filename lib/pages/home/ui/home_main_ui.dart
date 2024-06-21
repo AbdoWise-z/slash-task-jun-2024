@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:slash_task/pages/home/bloc/home/home_bloc.dart';
 import 'package:slash_task/pages/home/bloc/notifications/notifications_bloc.dart';
 import 'package:slash_task/pages/home/bloc/offers/offers_bloc.dart';
@@ -17,13 +15,13 @@ import 'package:slash_task/pages/home/ui/views/home.header.dart';
 import 'package:slash_task/pages/home/ui/views/home.items_bar.dart';
 import 'package:slash_task/pages/home/ui/views/home.offers.dart';
 import 'package:slash_task/pages/home/ui/views/home.search_bar.dart';
+import 'package:slash_task/shared/ui/debug_snake_bar.dart';
 import 'package:slash_task/shared/ui/shimmer_indicator.dart';
 import 'package:slash_task/shared/values.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
 class HomeMainUI extends StatefulWidget {
   const HomeMainUI({super.key});
-
   @override
   State<HomeMainUI> createState() => _HomeMainUIState();
 }
@@ -32,7 +30,7 @@ class _HomeMainUIState extends State<HomeMainUI> {
   final TextEditingController controller = TextEditingController();
   PageController? pageController = null;
 
-  final List<ShopItemModel> mockShopItems =  [
+  final List<ShopItemModel> mockShopItems = [
     ShopItemModel(
       liked: true,
       id: 0,
@@ -79,9 +77,12 @@ class _HomeMainUIState extends State<HomeMainUI> {
     BlocProvider.of<NotificationsBloc>(context).add(InitNotificationsEvent());
     BlocProvider.of<OffersBloc>(context).add(LoadOffersEvent());
 
-    BlocProvider.of<ShopItemsBloc<BestSellingShopItems>>(context).add(LoadShopItemsEvent<BestSellingShopItems>());
-    BlocProvider.of<ShopItemsBloc<NewArrivalsShopItems>>(context).add(LoadShopItemsEvent<NewArrivalsShopItems>());
-    BlocProvider.of<ShopItemsBloc<RecommendedShopItems>>(context).add(LoadShopItemsEvent<RecommendedShopItems>());
+    BlocProvider.of<ShopItemsBloc<BestSellingShopItems>>(context)
+        .add(LoadShopItemsEvent<BestSellingShopItems>());
+    BlocProvider.of<ShopItemsBloc<NewArrivalsShopItems>>(context)
+        .add(LoadShopItemsEvent<NewArrivalsShopItems>());
+    BlocProvider.of<ShopItemsBloc<RecommendedShopItems>>(context)
+        .add(LoadShopItemsEvent<RecommendedShopItems>());
   }
 
   void _handleTabSelection() {
@@ -107,24 +108,19 @@ class _HomeMainUIState extends State<HomeMainUI> {
           // Page "Home" content
           Shimmer(
             linearGradient: AppTheme.shimmerGradient,
-            child: BlocConsumer<HomeBloc, HomeState>(
-              listener: (context, state) {
-                // TODO: implement listener
-              },
-              builder: (context, homeState) {
 
+            child: BlocConsumer<HomeBloc, HomeState>(
+              listener: (context, state) {},
+              builder: (context, homeState) {
                 var widget = SingleChildScrollView(
                   child: Column(
                     children: [
                       //action bar
                       Container(
-                        padding: const EdgeInsets.all(AppDimen.GLOBAL_PADDING)
-                            .copyWith(
-                                top: AppDimen.APPBAR_TO_TOP_PADDING, bottom: 0),
+                        padding: const EdgeInsets.all(AppDimen.GLOBAL_PADDING).copyWith(top: AppDimen.APPBAR_TO_TOP_PADDING, bottom: 0),
+
                         child: BlocConsumer<NotificationsBloc, NotificationsState>(
-                          listener: (context, state) {
-                            // TODO: implement listener
-                          },
+                          listener: (context, state) {},
                           builder: (context, notificationState) {
                             return getHomeAppBar(
                                 hasNotification:
@@ -135,39 +131,45 @@ class _HomeMainUIState extends State<HomeMainUI> {
                                 location: homeState.currentLocation,
                                 onNotificationClicked: () {
                                   //TODO: implement a notifications view
+                                  showSnakeBar(context, "Notifications Clicked");
                                 },
                                 onSelectCity: () {
                                   //TODO: change with actual city selection magnetism
-                                  showCitySelectDialog(context, [
-                                    "Cairo: Naser City",
-                                    "Giza: 7th Oct",
-                                    "Something else idk"
-                                  ], (item) {
-                                    print(item);
-                                    switch (item) {
-                                      case 0:
-                                        BlocProvider.of<HomeBloc>(context)
-                                            .add(LocationChanged(
-                                          city: "Cairo",
-                                          location: "Naser City",
-                                        ));
-                                        break;
-                                      case 1:
-                                        BlocProvider.of<HomeBloc>(context)
-                                            .add(LocationChanged(
-                                          city: "Giza",
-                                          location: "7th Oct",
-                                        ));
-                                        break;
-                                      case 2:
-                                        BlocProvider.of<HomeBloc>(context)
-                                            .add(LocationChanged(
-                                          city: "Something",
-                                          location: "idk",
-                                        ));
-                                        break;
-                                    }
-                                  });
+                                  showSnakeBar(context, "Selecting City");
+                                  showCitySelectDialog(
+                                    context,
+                                    [
+                                      "Cairo: Naser City",
+                                      "Giza: 7th Oct",
+                                      "Something else idk"
+                                    ],
+                                    (item) {
+                                      print(item);
+                                      switch (item) {
+                                        case 0:
+                                          BlocProvider.of<HomeBloc>(context)
+                                              .add(LocationChanged(
+                                            city: "Cairo",
+                                            location: "Naser City",
+                                          ));
+                                          break;
+                                        case 1:
+                                          BlocProvider.of<HomeBloc>(context)
+                                              .add(LocationChanged(
+                                            city: "Giza",
+                                            location: "7th Oct",
+                                          ));
+                                          break;
+                                        case 2:
+                                          BlocProvider.of<HomeBloc>(context)
+                                              .add(LocationChanged(
+                                            city: "Something",
+                                            location: "idk",
+                                          ));
+                                          break;
+                                      }
+                                    },
+                                  );
                                 });
                           },
                         ),
@@ -190,10 +192,14 @@ class _HomeMainUIState extends State<HomeMainUI> {
                               BlocProvider.of<HomeBloc>(context).add(
                                   FiltersVisibilityChanged(
                                       visible: !homeState.filtersDisplayed));
+
+                              showSnakeBar(context, "Filter menu button  clicked");
+
                             },
                             onSearchSubmit: (str) {
                               //TODO: implement a search page
                               print("Should search for : $str");
+                              showSnakeBar(context, "Searching for : $str");
                             }),
                       ),
 
@@ -218,6 +224,7 @@ class _HomeMainUIState extends State<HomeMainUI> {
                               onOfferClicked: (offer) {
                                 //TODO: implement when a user selects an offer
                                 print("User selected Offer with ID: ${offer.id}");
+                                showSnakeBar(context, "Selected Offer with ID: ${offer.id}");
                               });
                         },
                       ),
@@ -235,7 +242,9 @@ class _HomeMainUIState extends State<HomeMainUI> {
                             moreOptionText: "See all",
                             moreIcon:
                                 const Icon(Icons.keyboard_arrow_right_rounded),
-                            onSeeMore: () {}),
+                            onSeeMore: () {
+                              showSnakeBar(context, "See all : categories");
+                            }),
                       ),
                       const SizedBox(
                         height: AppDimen.TITLE_TO_CONTENT_PADDING,
@@ -246,26 +255,31 @@ class _HomeMainUIState extends State<HomeMainUI> {
                               name: "Fashion",
                               icon: "assets/icons/icon_tshirt.png"),
                           CategoryModel(
-                              name: "Games", icon: "assets/icons/icon_dice.png"),
+                              name: "Games",
+                              icon: "assets/icons/icon_dice.png"),
                           CategoryModel(
                               name: "Accessories",
                               icon: "assets/icons/icon_glasses.png"),
                           CategoryModel(
-                              name: "Books", icon: "assets/icons/icon_book.png"),
+                              name: "Books",
+                              icon: "assets/icons/icon_book.png"),
                           CategoryModel(
                               name: "Fashion",
                               icon: "assets/icons/icon_tshirt.png"),
                           CategoryModel(
-                              name: "Games", icon: "assets/icons/icon_dice.png"),
+                              name: "Games",
+                              icon: "assets/icons/icon_dice.png"),
                           CategoryModel(
                               name: "Accessories",
                               icon: "assets/icons/icon_glasses.png"),
                           CategoryModel(
-                              name: "Books", icon: "assets/icons/icon_book.png"),
+                              name: "Books",
+                              icon: "assets/icons/icon_book.png"),
                         ],
                         onCategorySelected: (c) {
                           //TODO: implement action when a user selects a category
                           print("User selected Category: ${c.name}");
+                          showSnakeBar(context, "User selected Category: ${c.name}");
                         },
                       ),
 
@@ -282,48 +296,61 @@ class _HomeMainUIState extends State<HomeMainUI> {
                             moreOptionText: "See all",
                             moreIcon:
                                 const Icon(Icons.keyboard_arrow_right_rounded),
-                            onSeeMore: () {}),
+                            onSeeMore: () {
+                              showSnakeBar(context, "See all : Best selling");
+                            }),
                       ),
                       const SizedBox(
                         height: AppDimen.TITLE_TO_CONTENT_PADDING,
                       ),
                       BlocConsumer<ShopItemsBloc<BestSellingShopItems>, ShopItemsState>(
-                        listener: (context, state) {
-                        },
+                        listener: (context, state) {},
                         builder: (context, shopState) {
                           print("Rebuild Shop: Best Selling");
                           return HomeShopItemsBar(
-                            items: (shopState is ShopStateLoaded) ? shopState.items : mockShopItems,
+                            items: (shopState is ShopStateLoaded)
+                                ? shopState.items
+                                : mockShopItems,
                             onAddedToCart: (item) {
-                              BlocProvider.of<ShopItemsBloc<BestSellingShopItems>>(context).add(
-                                AddToCartEvent<BestSellingShopItems>(
-                                    item
-                                ),
+                              BlocProvider.of<
+                                          ShopItemsBloc<BestSellingShopItems>>(
+                                      context)
+                                  .add(
+                                AddToCartEvent<BestSellingShopItems>(item),
                               );
+                              showSnakeBar(context, "Item Added to cart : {id: ${item.id} , name: ${item.name}}");
                             },
-                            onLiked: (item , liked) {
+                            onLiked: (item, liked) {
                               if (liked) {
-                                BlocProvider.of<ShopItemsBloc<BestSellingShopItems>>(context).add(
-                                  LikeItemEvent<BestSellingShopItems>(
-                                      item
-                                  ),
+                                BlocProvider.of<
+                                        ShopItemsBloc<
+                                            BestSellingShopItems>>(context)
+                                    .add(
+                                  LikeItemEvent<BestSellingShopItems>(item),
                                 );
+                                showSnakeBar(context, "Liked Item: {id: ${item.id} , name: ${item.name}}");
                               } else {
-                                BlocProvider.of<ShopItemsBloc<BestSellingShopItems>>(context).add(
-                                  UnLikeItemEvent<BestSellingShopItems>(
-                                      item
-                                  ),
+                                BlocProvider.of<
+                                        ShopItemsBloc<
+                                            BestSellingShopItems>>(context)
+                                    .add(
+                                  UnLikeItemEvent<BestSellingShopItems>(item),
                                 );
+                                showSnakeBar(context, "UnLiked Item: {id: ${item.id} , name: ${item.name}}");
                               }
                             },
                             loadMore: () async {
-                              BlocProvider.of<ShopItemsBloc<BestSellingShopItems>>(context).add(LoadMoreShopItemsEvent<BestSellingShopItems>());
+                              BlocProvider.of<
+                                          ShopItemsBloc<BestSellingShopItems>>(
+                                      context)
+                                  .add(LoadMoreShopItemsEvent<
+                                      BestSellingShopItems>());
                             },
-                            onClicked: (c) {
+                            onClicked: (item) {
+                              showSnakeBar(context, "Item Clicked: {id: ${item.id} , name: ${item.name}}");
                             },
                             loading: shopState is! ShopStateLoaded,
                             loadingMore: (shopState is ShopStateLoaded) && shopState.loadingMore,
-
                           );
                         },
                       ),
@@ -341,49 +368,63 @@ class _HomeMainUIState extends State<HomeMainUI> {
                             moreOptionText: "See all",
                             moreIcon:
                                 const Icon(Icons.keyboard_arrow_right_rounded),
-                            onSeeMore: () {}),
+                            onSeeMore: () {
+                              showSnakeBar(context, "See all : New Arrivals");
+                            }),
                       ),
                       const SizedBox(
                         height: AppDimen.TITLE_TO_CONTENT_PADDING,
                       ),
                       BlocConsumer<ShopItemsBloc<NewArrivalsShopItems>, ShopItemsState>(
-                        listener: (context, state) {
-                        },
+                        listener: (context, state) {},
                         builder: (context, shopState) {
                           print("Rebuild Shop: New Arrivals");
                           return HomeShopItemsBar(
-                            items: (shopState is ShopStateLoaded) ? shopState.items : mockShopItems,
+                            items: (shopState is ShopStateLoaded)
+                                ? shopState.items
+                                : mockShopItems,
                             onAddedToCart: (item) {
-                              BlocProvider.of<ShopItemsBloc<NewArrivalsShopItems>>(context).add(
-                                AddToCartEvent<NewArrivalsShopItems>(
-                                    item
-                                ),
+                              BlocProvider.of<
+                                          ShopItemsBloc<NewArrivalsShopItems>>(
+                                      context)
+                                  .add(
+                                AddToCartEvent<NewArrivalsShopItems>(item),
                               );
+
+                              showSnakeBar(context, "Item Added to cart : {id: ${item.id} , name: ${item.name}}");
                             },
-                            onLiked: (item , liked) {
+                            onLiked: (item, liked) {
                               if (liked) {
-                                BlocProvider.of<ShopItemsBloc<NewArrivalsShopItems>>(context).add(
-                                  LikeItemEvent<NewArrivalsShopItems>(
-                                      item
-                                  ),
+                                BlocProvider.of<
+                                        ShopItemsBloc<
+                                            NewArrivalsShopItems>>(context)
+                                    .add(
+                                  LikeItemEvent<NewArrivalsShopItems>(item),
                                 );
+                                showSnakeBar(context, "Liked Item: {id: ${item.id} , name: ${item.name}}");
                               } else {
-                                BlocProvider.of<ShopItemsBloc<NewArrivalsShopItems>>(context).add(
-                                  UnLikeItemEvent<NewArrivalsShopItems>(
-                                      item
-                                  ),
+                                BlocProvider.of<
+                                        ShopItemsBloc<
+                                            NewArrivalsShopItems>>(context)
+                                    .add(
+                                  UnLikeItemEvent<NewArrivalsShopItems>(item),
                                 );
+                                showSnakeBar(context, "UnLiked Item: {id: ${item.id} , name: ${item.name}}");
                               }
                             },
                             loadMore: () async {
-                              BlocProvider.of<ShopItemsBloc<NewArrivalsShopItems>>(context).add(LoadMoreShopItemsEvent<NewArrivalsShopItems>());
+                              BlocProvider.of<
+                                          ShopItemsBloc<NewArrivalsShopItems>>(
+                                      context)
+                                  .add(LoadMoreShopItemsEvent<
+                                      NewArrivalsShopItems>());
                             },
                             onClicked: (item) {
-                              //TODO: implement when a user clicks on an item
+                              showSnakeBar(context, "Item Clicked: {id: ${item.id} , name: ${item.name}}");
                             },
                             loading: shopState is! ShopStateLoaded,
-                            loadingMore: (shopState is ShopStateLoaded) && shopState.loadingMore,
-
+                            loadingMore: (shopState is ShopStateLoaded) &&
+                                shopState.loadingMore,
                           );
                         },
                       ),
@@ -401,52 +442,66 @@ class _HomeMainUIState extends State<HomeMainUI> {
                             moreOptionText: "See all",
                             moreIcon:
                                 const Icon(Icons.keyboard_arrow_right_rounded),
-                            onSeeMore: () {}),
+                            onSeeMore: () {
+                              showSnakeBar(context, "See all : Recommended For You");
+                            }),
                       ),
                       const SizedBox(
                         height: AppDimen.TITLE_TO_CONTENT_PADDING,
                       ),
-                      BlocConsumer<ShopItemsBloc<RecommendedShopItems>, ShopItemsState>(
-                        listener: (context, state) {
-                        },
+                      BlocConsumer<ShopItemsBloc<RecommendedShopItems>,
+                          ShopItemsState>(
+                        listener: (context, state) {},
                         builder: (context, shopState) {
                           print("Rebuild Shop: Recommended");
                           return HomeShopItemsBar(
-                            items: (shopState is ShopStateLoaded) ? shopState.items : mockShopItems,
+                            items: (shopState is ShopStateLoaded)
+                                ? shopState.items
+                                : mockShopItems,
                             onAddedToCart: (item) {
-                              BlocProvider.of<ShopItemsBloc<RecommendedShopItems>>(context).add(
-                                AddToCartEvent<RecommendedShopItems>(
-                                    item
-                                ),
+                              BlocProvider.of<
+                                          ShopItemsBloc<RecommendedShopItems>>(
+                                      context)
+                                  .add(
+                                AddToCartEvent<RecommendedShopItems>(item),
                               );
+                              showSnakeBar(context, "Item Added to cart : {id: ${item.id} , name: ${item.name}}");
                             },
-                            onLiked: (item , liked) {
+                            onLiked: (item, liked) {
                               if (liked) {
-                                BlocProvider.of<ShopItemsBloc<RecommendedShopItems>>(context).add(
-                                  LikeItemEvent<RecommendedShopItems>(
-                                      item
-                                  ),
+                                BlocProvider.of<
+                                        ShopItemsBloc<
+                                            RecommendedShopItems>>(context)
+                                    .add(
+                                  LikeItemEvent<RecommendedShopItems>(item),
                                 );
+                                showSnakeBar(context, "Liked Item: {id: ${item.id} , name: ${item.name}}");
                               } else {
-                                BlocProvider.of<ShopItemsBloc<RecommendedShopItems>>(context).add(
-                                  UnLikeItemEvent<RecommendedShopItems>(
-                                      item
-                                  ),
+                                BlocProvider.of<
+                                        ShopItemsBloc<
+                                            RecommendedShopItems>>(context)
+                                    .add(
+                                  UnLikeItemEvent<RecommendedShopItems>(item),
                                 );
+                                showSnakeBar(context, "UnLiked Item: {id: ${item.id} , name: ${item.name}}");
                               }
                             },
                             loadMore: () async {
-                              BlocProvider.of<ShopItemsBloc<RecommendedShopItems>>(context).add(LoadMoreShopItemsEvent<RecommendedShopItems>());
+                              BlocProvider.of<
+                                          ShopItemsBloc<RecommendedShopItems>>(
+                                      context)
+                                  .add(LoadMoreShopItemsEvent<
+                                      RecommendedShopItems>());
                             },
-                            onClicked: (c) {
+                            onClicked: (item) {
+                              showSnakeBar(context, "Item Clicked: {id: ${item.id} , name: ${item.name}}");
                             },
                             loading: shopState is! ShopStateLoaded,
-                            loadingMore: (shopState is ShopStateLoaded) && shopState.loadingMore,
-
+                            loadingMore: (shopState is ShopStateLoaded) &&
+                                shopState.loadingMore,
                           );
                         },
                       ),
-
                     ],
                   ),
                 );
@@ -474,7 +529,7 @@ class _HomeMainUIState extends State<HomeMainUI> {
       ),
       bottomNavigationBar: TabBar(
         overlayColor: MaterialStateProperty.resolveWith<Color?>(
-              (Set<MaterialState> states) {
+          (Set<MaterialState> states) {
             if (states.contains(MaterialState.pressed)) {
               return Colors.black.withOpacity(0.2);
             }
@@ -488,34 +543,39 @@ class _HomeMainUIState extends State<HomeMainUI> {
         tabs: [
           Tab(
             icon: Icon(
-              _tabController != null && _tabController!.index == 0 ? CupertinoIcons.house_fill : CupertinoIcons.house,
+              _tabController != null && _tabController!.index == 0
+                  ? CupertinoIcons.house_fill
+                  : CupertinoIcons.house,
               color: Colors.black,
             ),
             iconMargin: const EdgeInsets.only(bottom: 0),
             text: "Home",
           ),
-
           Tab(
             icon: Icon(
-              _tabController != null && _tabController!.index == 1 ? CupertinoIcons.heart_fill : CupertinoIcons.heart ,
+              _tabController != null && _tabController!.index == 1
+                  ? CupertinoIcons.heart_fill
+                  : CupertinoIcons.heart,
               color: Colors.black,
             ),
             iconMargin: const EdgeInsets.only(bottom: 0),
             text: "Favorites",
           ),
-
           Tab(
             icon: Icon(
-              _tabController != null && _tabController!.index == 2 ? CupertinoIcons.cart_fill : CupertinoIcons.cart ,
+              _tabController != null && _tabController!.index == 2
+                  ? CupertinoIcons.cart_fill
+                  : CupertinoIcons.cart,
               color: Colors.black,
             ),
             iconMargin: const EdgeInsets.only(bottom: 0),
             text: "My Cart",
           ),
-
           Tab(
             icon: Icon(
-              _tabController != null && _tabController!.index == 3 ? CupertinoIcons.person_crop_circle_fill : CupertinoIcons.person_crop_circle ,
+              _tabController != null && _tabController!.index == 3
+                  ? CupertinoIcons.person_crop_circle_fill
+                  : CupertinoIcons.person_crop_circle,
               color: Colors.black,
             ),
             iconMargin: const EdgeInsets.only(bottom: 0),
@@ -523,14 +583,13 @@ class _HomeMainUIState extends State<HomeMainUI> {
           ),
         ],
         indicator: MaterialIndicator(
-          tabPosition: TabPosition.top,
-          topLeftRadius: 0,
-          topRightRadius: 0,
-          bottomLeftRadius: 8,
-          bottomRightRadius: 8,
-          height: 6,
-          horizontalPadding: 2
-        ),
+            tabPosition: TabPosition.top,
+            topLeftRadius: 0,
+            topRightRadius: 0,
+            bottomLeftRadius: 8,
+            bottomRightRadius: 8,
+            height: 6,
+            horizontalPadding: 2),
       ),
     );
   }

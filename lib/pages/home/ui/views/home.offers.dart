@@ -219,7 +219,7 @@ class OfferCard extends StatelessWidget {
   Widget build(BuildContext context) {
     double off = AppDimen.GLOBAL_PADDING / maxWidth;
     double scaleX = (1 - off) + off * (1 - (index - page).abs().clamp(0, 1));
-    double scaleY = (1 - off * 2) + off * 2 * (1 - (index - page).abs().clamp(0, 1));
+    double scaleY = (1 - 0.2) + 0.2 * (1 - (index - page).abs().clamp(0, 1));
 
 
     if (loading) {

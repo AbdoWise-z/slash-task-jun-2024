@@ -40,7 +40,13 @@ class _HomeCategoriesBarState extends State<HomeCategoriesBar> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CategoryView(name: cat.name, icon: cat.icon),
+                  CategoryView(
+                    name: cat.name,
+                    icon: cat.icon,
+                    onClick: () {
+                        widget.onCategorySelected(cat);
+                    },
+                  ),
                   const SizedBox(
                     width: AppDimen.CATEGORY_TO_CATEGORY_PADDING,
                   ),
@@ -61,28 +67,36 @@ class _HomeCategoriesBarState extends State<HomeCategoriesBar> {
 class CategoryView extends StatelessWidget {
   final String name;
   final String icon;
-  const CategoryView({super.key, required this.name, required this.icon});
+  final void Function() onClick;
+  const CategoryView({super.key, required this.name, required this.icon, required this.onClick});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        CircleAvatar(
-          radius: AppDimen.CATEGORY_AVATAR_SIZE,
-          backgroundColor: AppTheme.categoriesAvatarColor,
-          child: Image.asset(
-            icon,
-            width: AppDimen.CATEGORY_ICON_SIZE,
-            height: AppDimen.CATEGORY_ICON_SIZE,
-          ),
+    return InkWell(
+      onTap: onClick,
+      borderRadius: BorderRadius.circular(AppDimen.ROUNDED_CORNERS_RADIUS),
+      child: Padding(
+        padding: const EdgeInsets.all(4),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: AppDimen.CATEGORY_AVATAR_SIZE,
+              backgroundColor: AppTheme.categoriesAvatarColor,
+              child: Image.asset(
+                icon,
+                width: AppDimen.CATEGORY_ICON_SIZE,
+                height: AppDimen.CATEGORY_ICON_SIZE,
+              ),
+            ),
+
+            const SizedBox(height: 4,),
+
+            Text(name , style: AppTheme.mediumTextStyle,),
+          ],
         ),
-
-        const SizedBox(height: 4,),
-
-        Text(name , style: AppTheme.mediumTextStyle,),
-      ],
+      ),
     );
   }
 }

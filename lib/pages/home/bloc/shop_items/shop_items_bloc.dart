@@ -17,6 +17,7 @@ class RecommendedShopItems extends ShopItem {}
 
 class ShopItemsBloc<T extends ShopItem> extends Bloc<ShopItemsEvent<T>, ShopItemsState> {
   ShopItemsBloc() : super(ShopStateInitial()) {
+
     on<LoadShopItemsEvent<T>>(_loadShopInitial);
 
     on<LoadMoreShopItemsEvent<T>>((event , emit) async {
@@ -63,9 +64,9 @@ class ShopItemsBloc<T extends ShopItem> extends Bloc<ShopItemsEvent<T>, ShopItem
     });
 
     on<AddToCartEvent<T>>((event , emit) async {
-      var list = (state as ShopStateLoaded).items;
+      var list = (state as ShopStateLoaded).cart;
       list.add(event.item.copyWith());
-      emit((state as ShopStateLoaded).copyWith(items: list,));
+      emit((state as ShopStateLoaded).copyWith(cart: list,));
       print("Item added to cart $T");
     });
   }
