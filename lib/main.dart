@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:slash_task/pages/home/home.dart';
 import 'package:slash_task/shared/api/api.dart';
+import 'package:slash_task/shared/ui/web_scroll_behavior.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      scrollBehavior: kIsWeb ? WebScrollBehavior() : null,
       title: 'Slash-task-app',
       theme: ThemeData(
         // This is the theme of your application.

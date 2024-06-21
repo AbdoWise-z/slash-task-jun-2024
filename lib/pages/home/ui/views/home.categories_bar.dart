@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:slash_task/pages/home/models/category.model.dart';
 import 'package:slash_task/shared/values.dart';
@@ -16,25 +17,21 @@ class HomeCategoriesBar extends StatefulWidget {
 
 class _HomeCategoriesBarState extends State<HomeCategoriesBar> {
 
-  GlobalKey rowKey = GlobalKey();
-
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    Widget catBar = SingleChildScrollView(
+      primary: true,
       scrollDirection: Axis.horizontal,
+
       child: Row(
-        key: rowKey,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-
           const SizedBox(width: AppDimen.GLOBAL_PADDING,),
-
           for (var cat in widget.categories)
             Container(
               alignment: Alignment.center,
@@ -44,7 +41,7 @@ class _HomeCategoriesBarState extends State<HomeCategoriesBar> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CategoryView(name: cat.name, icon: cat.icon),
-                  SizedBox(
+                  const SizedBox(
                     width: AppDimen.CATEGORY_TO_CATEGORY_PADDING,
                   ),
                 ],
@@ -56,6 +53,8 @@ class _HomeCategoriesBarState extends State<HomeCategoriesBar> {
         ],
       ),
     );
+
+    return catBar;
   }
 }
 
