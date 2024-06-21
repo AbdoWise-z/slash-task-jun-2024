@@ -70,4 +70,8 @@ class AppValues {
   static const double SHOP_ITEM_ASPECT_RATIO_MOBILE = 2.1 / 3;
   static const double SHOP_ITEM_ASPECT_RATIO_WEB    = 2 / 3;
 
+  static const double OFFERS_ASPECT_RATIO_MOBILE = 0.2;
+  static const double OFFERS_ASPECT_RATIO_WEB    = 0.2;
+
+
 }

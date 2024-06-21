@@ -88,7 +88,25 @@ class _ShopItemsWeb extends StatelessWidget {
                         onPressed: () {
                           container.loadMore!();
                         },
-                        child: const Text("More"),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text("More"),
+                                  Text("Offers"),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
 
                       ),
                     );
@@ -158,8 +176,6 @@ class _ShopItemsMobileState extends State<_ShopItemsMobile> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return LayoutBuilder(
       builder: (context , box) {
         double width        = box.maxWidth;
@@ -177,8 +193,6 @@ class _ShopItemsMobileState extends State<_ShopItemsMobile> {
         if (shouldAskForMore){
           widget.container.loadMore!();
         }
-
-        print("atlm: $shouldAskForMore");
 
         return SizedBox(
           height: itemHeight,
