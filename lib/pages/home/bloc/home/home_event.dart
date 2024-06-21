@@ -3,6 +3,10 @@ part of 'home_bloc.dart';
 @immutable
 sealed class HomeEvent {}
 
+class HomeErrorEvent extends HomeEvent{}
+
+class HomeLoadEvent extends HomeEvent{}
+
 class ChangeActiveTabEvent extends HomeEvent {
   final int tabIndex;
 
@@ -11,7 +15,6 @@ class ChangeActiveTabEvent extends HomeEvent {
 
 class FiltersVisibilityChanged extends HomeEvent {
   final bool visible;
-
   FiltersVisibilityChanged({required this.visible});
 }
 

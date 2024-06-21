@@ -1,4 +1,6 @@
 
-const String API_LINK = "the sever address should go here, but since we work with dummy data, its ignored currently";
+const String API_LINK = "api.jsonbin.io";
+
 const Duration API_TIMEOUT = Duration(seconds: 5);
 
+const mockAPI = false;

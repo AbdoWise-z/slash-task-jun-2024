@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:slash_task/shared/assets_utils.dart';
@@ -37,10 +39,10 @@ class ApiPath{
   const ApiPath._(String p) : _path = p;
 
   //TODO: add paths here
-  static ApiPath fetchBestSelling       = const ApiPath._("api/bestSelling");
-  static ApiPath fetchNewArrivals       = const ApiPath._("api/arrivals");
-  static ApiPath fetchOffers            = const ApiPath._("api/offers");
-  static ApiPath fetchRecommended       = const ApiPath._("api/recommended");
+  static ApiPath fetchBestSelling       = const ApiPath._("/v3/b/6675d9dead19ca34f87ca35c");
+  static ApiPath fetchNewArrivals       = const ApiPath._("/v3/b/6675d9e7e41b4d34e406e9d4");
+  static ApiPath fetchOffers            = const ApiPath._("/v3/b/6675d9edacd3cb34a85b20b7");
+  static ApiPath fetchRecommended       = const ApiPath._("/v3/b/6675d9f5acd3cb34a85b20bc");
 
 }
 
@@ -59,8 +61,15 @@ class ApiResponse<T> {
     print("ApiResponse{code: $code , data: $data , body: $responseBody}");
   }
 
-  static const CODE_SUCCESS = 0;
-  static const CODE_FAILED  = 1;
+  static const int CODE_SUCCESS = 200;
+  static const int CODE_SUCCESS_CREATED = 201;
+  static const int CODE_SUCCESS_NO_BODY = 204;
+  static const int CODE_BAD_REQUEST = 400;
+  static const int CODE_NOT_FOUND = 404;
+  static const int CODE_TIMEOUT = 1000;
+  static const int CODE_NO_INTERNET = 1001;
+  static const int CODE_NOT_AUTHORIZED = 401;
+  static const int CODE_UNKNOWN = -1;
 
 }
 
@@ -99,24 +108,22 @@ class Api {
   /// [body] the body that will be used (normally a json string)
   /// [encoding] the content encoding (normally UTF8)
   static Future<ApiResponse<T>> _apiPostNoFilesImpl<T>(Uri url , Map<String,String>? headers , Object? body , Encoding encoding) async {
-    // try {
-    //   var response = await http.post(
-    //     url,
-    //     headers: headers,
-    //     body: body,
-    //     encoding: encoding,
-    //   ).timeout(API_TIMEOUT);
-    //   return ApiResponse<T>(code: response.statusCode, responseBody: response.body);
-    // } on SocketException {
-    //   return ApiResponse<T>(code: ApiResponse.CODE_NO_INTERNET, responseBody: null);
-    // } on TimeoutException {
-    //   return ApiResponse<T>(code: ApiResponse.CODE_TIMEOUT, responseBody: null);
-    // } on Error catch (e) {
-    //   print(e);
-    //   return ApiResponse<T>(code: ApiResponse.CODE_UNKNOWN, responseBody: null);
-    // }
-
-    throw UnimplementedError();
+    try {
+      var response = await http.post(
+        url,
+        headers: headers,
+        body: body,
+        encoding: encoding,
+      ).timeout(API_TIMEOUT);
+      return ApiResponse<T>(code: response.statusCode, responseBody: response.body);
+    } on SocketException {
+      return ApiResponse<T>(code: ApiResponse.CODE_NO_INTERNET, responseBody: null);
+    } on TimeoutException {
+      return ApiResponse<T>(code: ApiResponse.CODE_TIMEOUT, responseBody: null);
+    } on Error catch (e) {
+      print(e);
+      return ApiResponse<T>(code: ApiResponse.CODE_UNKNOWN, responseBody: null);
+    }
   }
 
   /// the actual implementation of the POST with file functionality
@@ -126,31 +133,29 @@ class Api {
   /// [files] the files to upload with the request
   /// [encoding] the content encoding (normally UTF8)
   static Future<ApiResponse<T>> _apiPostFilesImpl<T>(Uri url , Map<String,String>? headers , Object? body , List<http.MultipartFile> files , Encoding encoding) async {
-    // try {
-    //   var request = http.MultipartRequest("POST" , url);
-    //   request.headers.addAll(headers ?? {});
-    //   if (body != null) {
-    //     if (body is Map<String , String>){
-    //       request.fields.addAll(body);
-    //     }else{
-    //       print("_apiPostFilesImpl: tried to add a body that is not a map");
-    //     }
-    //   }
-    //   request.files.addAll(files);
-    //
-    //   var response = await request.send();
-    //   var response2 = await http.Response.fromStream(response);
-    //   return ApiResponse<T>(code: response.statusCode, responseBody: String.fromCharCodes(response2.bodyBytes));
-    // } on SocketException {
-    //   return ApiResponse<T>(code: ApiResponse.CODE_NO_INTERNET, responseBody: null);
-    // } on TimeoutException{
-    //   return ApiResponse<T>(code: ApiResponse.CODE_TIMEOUT, responseBody: null);
-    // } on Error catch (e) {
-    //   print(e);
-    //   return ApiResponse<T>(code: ApiResponse.CODE_UNKNOWN, responseBody: null);
-    // }
+    try {
+      var request = http.MultipartRequest("POST" , url);
+      request.headers.addAll(headers ?? {});
+      if (body != null) {
+        if (body is Map<String , String>){
+          request.fields.addAll(body);
+        }else{
+          print("_apiPostFilesImpl: tried to add a body that is not a map");
+        }
+      }
+      request.files.addAll(files);
 
-    throw UnimplementedError();
+      var response = await request.send();
+      var response2 = await http.Response.fromStream(response);
+      return ApiResponse<T>(code: response.statusCode, responseBody: String.fromCharCodes(response2.bodyBytes));
+    } on SocketException {
+      return ApiResponse<T>(code: ApiResponse.CODE_NO_INTERNET, responseBody: null);
+    } on TimeoutException{
+      return ApiResponse<T>(code: ApiResponse.CODE_TIMEOUT, responseBody: null);
+    } on Error catch (e) {
+      print(e);
+      return ApiResponse<T>(code: ApiResponse.CODE_UNKNOWN, responseBody: null);
+    }
   }
 
   /// the API POST function interface
@@ -172,13 +177,56 @@ class Api {
       }
       ) async {
 
-    // encoding ??= Encoding.getByName("utf-8");
-    // if (files == null){ //not an upload request
-    //   return _apiPostNoFilesImpl<T>(path.url(params: params) , headers , body , encoding!);
-    // }
-    // return _apiPostFilesImpl<T>(path.url(params: params) , headers , body , files , encoding!);
+    encoding ??= Encoding.getByName("utf-8");
+    if (files == null){ //not an upload request
+      return _apiPostNoFilesImpl<T>(path.url(params: params) , headers , body , encoding!);
+    }
+    return _apiPostFilesImpl<T>(path.url(params: params) , headers , body , files , encoding!);
+  }
 
-    /// for now, we simulate an API request by just doing a delay and then returning the dummy file from assets
+
+  /// the actual implementation of the GET with no files functionality
+  /// takes [url] the URL address of the end point
+  /// [headers] the headers that will be used in the request
+  /// [body] the body that will be used (normally a json string)
+  /// [encoding] the content encoding (normally UTF8)
+  static Future<ApiResponse<T>> _apiGetNoFilesImpl<T>(Uri url , Map<String,String>? headers) async {
+    try{
+      var response = await http.get(
+        url,
+        headers: headers,
+      ).timeout(API_TIMEOUT);
+      //dynamic responsePayload = json.decode(response.body);
+      return ApiResponse<T>(code: response.statusCode, responseBody: response.body);
+    } on SocketException {
+      return ApiResponse<T>(code: ApiResponse.CODE_NO_INTERNET, responseBody: null);
+    } on TimeoutException {
+      return ApiResponse<T>(code: ApiResponse.CODE_TIMEOUT, responseBody: null);
+    } on Error catch (e) {
+      print(e);
+      return ApiResponse<T>(code: ApiResponse.CODE_UNKNOWN, responseBody: null);
+    }
+  }
+
+  /// the API GET function interface
+  /// takes :
+  /// [path] an API path for the end point
+  /// [params] link params used in the request
+  /// [headers] headers used in the request
+  static Future<ApiResponse<T>> apiGet<T>(
+      ApiPath path ,
+      {
+        Map<String,dynamic>? params ,
+        Map<String,String>? headers ,
+      }
+      ) async {
+
+    if (!mockAPI){
+      headers ??= JSON_TYPE_HEADER;
+      return _apiGetNoFilesImpl<T>(path.url(params: params) , headers );
+    }
+
+    /// load form assets for testing ..
     await Future.delayed(const Duration(milliseconds: 2000));
     String item = "offers.json";
 
@@ -191,5 +239,127 @@ class Api {
     }
 
     return ApiResponse(code: 0, responseBody: await loadAsset("assets/data/$item"));
+  }
+
+  /// the actual implementation of the PATCH with no files functionality
+  /// takes [url] the URL address of the end point
+  /// [headers] the headers that will be used in the request
+  /// [body] the body that will be used (normally a json string)
+  /// [encoding] the content encoding (normally UTF8)
+  static Future<ApiResponse<T>> _apiPatchNoFilesImpl<T>(Uri url , Map<String,String>? headers , Object? body , Encoding encoding) async {
+    try {
+      var response = await http.patch(
+        url,
+        headers: headers,
+        body: body,
+        encoding: encoding,
+      ).timeout(API_TIMEOUT);
+      return ApiResponse<T>(code: response.statusCode, responseBody: response.body);
+    } on SocketException {
+      return ApiResponse<T>(code: ApiResponse.CODE_NO_INTERNET, responseBody: null);
+    } on TimeoutException {
+      return ApiResponse<T>(code: ApiResponse.CODE_TIMEOUT, responseBody: null);
+    } on Error catch (e) {
+      print(e);
+      return ApiResponse<T>(code: ApiResponse.CODE_UNKNOWN, responseBody: null);
+    }
+  }
+
+  /// the actual implementation of the PATCH with file functionality
+  /// takes [url] the URL address of the end point
+  /// [headers] the headers that will be used in the request
+  /// [body] the body that will be used (normally a json string)
+  /// [files] the files to upload with the request
+  /// [encoding] the content encoding (normally UTF8)
+  static Future<ApiResponse<T>> _apiPatchFilesImpl<T>(Uri url , Map<String,String>? headers , Object? body , List<http.MultipartFile> files , Encoding encoding) async {
+    try {
+      var request = http.MultipartRequest("PATCH" , url);
+      request.headers.addAll(headers ?? {});
+      if (body != null) {
+        if (body is Map<String , String>){
+          request.fields.addAll(body);
+        }else{
+          print("_apiPostFilesImpl: tried to add a body that is not a map");
+        }
+      }
+      request.files.addAll(files);
+
+      var response = await request.send();
+      var response2 = await http.Response.fromStream(response);
+      return ApiResponse<T>(code: response.statusCode, responseBody: String.fromCharCodes(response2.bodyBytes));
+    } on SocketException {
+      return ApiResponse<T>(code: ApiResponse.CODE_NO_INTERNET, responseBody: null);
+    } on TimeoutException{
+      return ApiResponse<T>(code: ApiResponse.CODE_TIMEOUT, responseBody: null);
+    } on Error catch (e) {
+      print(e);
+      return ApiResponse<T>(code: ApiResponse.CODE_UNKNOWN, responseBody: null);
+    }
+  }
+
+  /// the API PATCH function interface
+  /// takes :
+  /// [path] an API path for the end point
+  /// [params] link params used in the request
+  /// [headers] headers used in the request
+  /// [body] the request body
+  /// [files] the files to upload
+  /// [encoding] the content encoding of the body
+  static Future<ApiResponse<T>> apiPatch<T>(
+      ApiPath path ,
+      {
+        Map<String,dynamic>? params ,
+        Map<String,String>? headers ,
+        Object? body ,
+        List<http.MultipartFile>? files ,
+        Encoding? encoding ,
+      }
+      ){
+    encoding ??= Encoding.getByName("utf-8");
+    if (files == null){ //not an upload request
+      return _apiPatchNoFilesImpl<T>(path.url(params: params) , headers , body , encoding!);
+    }
+    return _apiPatchFilesImpl<T>(path.url(params: params) , headers , body , files , encoding!);
+  }
+
+  /// the actual implementation of the DELETE with no files functionality
+  /// takes [url] the URL address of the end point
+  /// [headers] the headers that will be used in the request
+  /// [encoding] the content encoding (normally UTF8)
+  static Future<ApiResponse<T>> _apiDeleteNoFilesImpl<T>(Uri url , Map<String,String>? headers , Encoding encoding) async {
+    try {
+      var response = await http.delete(
+        url,
+        headers: headers,
+        encoding: encoding,
+      ).timeout(API_TIMEOUT);
+      return ApiResponse<T>(code: response.statusCode, responseBody: response.body);
+    } on SocketException {
+      return ApiResponse<T>(code: ApiResponse.CODE_NO_INTERNET, responseBody: null);
+    } on TimeoutException {
+      return ApiResponse<T>(code: ApiResponse.CODE_TIMEOUT, responseBody: null);
+    } on Error catch (e) {
+      print(e);
+      return ApiResponse<T>(code: ApiResponse.CODE_UNKNOWN, responseBody: null);
+    }
+  }
+
+  /// the API DELETE function interface
+  /// takes :
+  /// [path] an API path for the end point
+  /// [params] link params used in the request
+  /// [headers] headers used in the request
+  /// [encoding] the content encoding of the body
+  static Future<ApiResponse<T>> apiDelete<T>(
+      ApiPath path ,
+      {
+        Map<String,dynamic>? params ,
+        Map<String,String>? headers ,
+        Encoding? encoding ,
+      }
+      ){
+    encoding ??= Encoding.getByName("utf-8");
+
+    return _apiDeleteNoFilesImpl<T>(path.url(params: params) , headers , encoding!);
   }
 }

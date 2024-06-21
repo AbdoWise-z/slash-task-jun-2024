@@ -1,12 +1,24 @@
 part of 'home_bloc.dart';
 
-class HomeState extends Equatable {
+sealed class BaseHomeState extends Equatable {}
+
+class InitialHomeState extends BaseHomeState {
+  @override
+  List<Object?> get props => [];
+}
+
+class ErrorHomeState extends BaseHomeState {
+  @override
+  List<Object?> get props => [];
+}
+
+class HomeState extends BaseHomeState {
   final int activeTab;
   final bool filtersDisplayed;
   final String currentLocation;
   final String currentCity;
 
-  const HomeState({
+  HomeState({
     this.activeTab = 0,
     this.filtersDisplayed = false,
     this.currentLocation = "Naser City",

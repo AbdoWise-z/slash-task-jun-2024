@@ -3,12 +3,17 @@ part of 'shop_items_bloc.dart';
 @immutable
 sealed class ShopItemsState extends Equatable {}
 
-final class ShopStateInitial     extends ShopItemsState {
+final class ShopStateInitial        extends ShopItemsState {
   @override
   List<Object?> get props => [];
 }
 
-final class ShopStateLoaded      extends ShopItemsState {
+final class ShopItemsStateLoadError extends ShopItemsState {
+  @override
+  List<Object?> get props => [];
+}
+
+final class ShopStateLoaded         extends ShopItemsState {
   final List<ShopItemModel> items;
   final List<ShopItemModel> cart;
   final bool loadingMore;

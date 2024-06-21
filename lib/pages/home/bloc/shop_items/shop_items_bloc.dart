@@ -72,17 +72,23 @@ class ShopItemsBloc<T extends ShopItem> extends Bloc<ShopItemsEvent<T>, ShopItem
   }
 
   FutureOr<void> _loadShopInitial(LoadShopItemsEvent<T> event, Emitter<ShopItemsState> emit) async {
-    //fixme: handle situation where there is no response
+    emit(ShopStateInitial());
+
     var items = await HomeRepo.loadShopItems(
         (T == BestSellingShopItems) ? ShopItemType.Best_Selling :
         (T == NewArrivalsShopItems) ? ShopItemType.New_Arrivals :
         ShopItemType.Recommended
     );
-    emit(ShopStateLoaded(
-      cart: [],
-      items: items.data!,
-      loadingMore: false,
-    ));
+
+    if (items.data == null){ //failed to load ...
+      emit(ShopItemsStateLoadError());
+    } else {
+      emit(ShopStateLoaded(
+        cart: [],
+        items: items.data!,
+        loadingMore: false,
+      ));
+    }
   }
 
   FutureOr<void> _loadMoreShopItems(LoadMoreShopItemsEvent<T> event, Emitter<ShopItemsState> emit) async {
@@ -94,7 +100,11 @@ class ShopItemsBloc<T extends ShopItem> extends Bloc<ShopItemsEvent<T>, ShopItem
         ShopItemType.Recommended
     );
     var list = (state as ShopStateLoaded).items;
-    list.addAll(items.data!);
+
+    if (items.data != null) {
+      list.addAll(items.data!);
+    }
+
     emit(
         (state as ShopStateLoaded).copyWith(
           items: list,
