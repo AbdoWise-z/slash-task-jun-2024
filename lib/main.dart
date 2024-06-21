@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:slash_task/pages/home/home.dart';
-import 'package:slash_task/shared/api/api.dart';
 import 'package:slash_task/shared/ui/web_scroll_behavior.dart';
 import 'package:slash_task/shared/values.dart';
 
