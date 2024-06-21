@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "name": "Best Seller 1",
+    "price": 29.99,
+    "image": "assets/images/best_seller_1.png"
+  },
+  {
+    "id": 2,
+    "name": "Best Seller 2",
+    "price": 49.99,
+    "image": "assets/images/best_seller_2.png"
+  },
+  {
+    "id": 3,
+    "name": "Best Seller 3",
+    "price": 19.99,
+    "image": "assets/images/best_seller_3.png"
+  },
+  {
+    "id": 4,
+    "name": "Best Seller 4",
+    "price": 39.99,
+    "image": "assets/images/best_seller_4.png"
+  },
+  {
+    "id": 5,
+    "name": "Best Seller 5",
+    "price": 24.99,
+    "image": "assets/images/best_seller_5.png"
+  },
+  {
+    "id": 1,
+    "name": "Best Seller 1",
+    "price": 29.99,
+    "image": "assets/images/best_seller_1.png"
+  },
+  {
+    "id": 2,
+    "name": "Best Seller 2",
+    "price": 49.99,
+    "image": "assets/images/best_seller_2.png"
+  },
+  {
+    "id": 3,
+    "name": "Best Seller 3",
+    "price": 19.99,
+    "image": "assets/images/best_seller_3.png"
+  },
+  {
+    "id": 4,
+    "name": "Best Seller 4",
+    "price": 39.99,
+    "image": "assets/images/best_seller_4.png"
+  },
+  {
+    "id": 5,
+    "name": "Best Seller 5",
+    "price": 24.99,
+    "image": "assets/images/best_seller_5.png"
+  }
+]

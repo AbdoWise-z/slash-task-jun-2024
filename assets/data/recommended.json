@@ -1,0 +1,32 @@
+[
+	{
+      "id": 1,
+      "name": "Recommended 1",
+      "price": 27.99,
+      "image": "assets/images/recommended_1.png"
+    },
+    {
+      "id": 2,
+      "name": "Recommended 2",
+      "price": 47.99,
+      "image": "assets/images/recommended_2.png"
+    },
+    {
+      "id": 3,
+      "name": "Recommended 3",
+      "price": 18.99,
+      "image": "assets/images/recommended_3.png"
+    },
+    {
+      "id": 4,
+      "name": "Recommended 4",
+      "price": 36.99,
+      "image": "assets/images/recommended_4.png"
+    },
+    {
+      "id": 5,
+      "name": "Recommended 5",
+      "price": 25.99,
+      "image": "assets/images/recommended_5.png"
+    }
+]

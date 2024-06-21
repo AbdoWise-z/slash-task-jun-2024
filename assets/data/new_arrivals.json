@@ -1,0 +1,32 @@
+[
+    {
+      "id": 1,
+      "name": "New Arrival 1",
+      "price": 34.99,
+      "image": "assets/images/new_arrival_1.png"
+    },
+    {
+      "id": 2,
+      "name": "New Arrival 2",
+      "price": 54.99,
+      "image": "assets/images/new_arrival_2.png"
+    },
+    {
+      "id": 3,
+      "name": "New Arrival 3",
+      "price": 21.99,
+      "image": "assets/images/new_arrival_3.png"
+    },
+    {
+      "id": 4,
+      "name": "New Arrival 4",
+      "price": 42.99,
+      "image": "assets/images/new_arrival_4.png"
+    },
+    {
+      "id": 5,
+      "name": "New Arrival 5",
+      "price": 29.49,
+      "image": "assets/images/new_arrival_5.png"
+    }
+]
