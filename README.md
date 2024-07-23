@@ -2,6 +2,12 @@
 
 This document outlines the steps to build and run the `slash-task-jun-2024` Flutter project.
 
+## Demo
+Demo of the application for the <strong>Mobile</strong> and <strong>Web</strong> versions.
+<center>
+<image src="images/phone_demo.gif" width="21.1%" height="100%"/>
+<image src="images/web_demo.gif" width="60%" height="100%"/>
+</center>
 ## Prerequisites
 
 Before you begin, ensure you have the following software installed on your machine:
